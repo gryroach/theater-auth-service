@@ -3,7 +3,7 @@ from functools import wraps
 
 import typer
 
-from db.postgres import Base, engine
+from db.db import Base, engine
 
 app = typer.Typer()
 

@@ -9,7 +9,7 @@ from redis import (
     TimeoutError as RedisTimeoutError,
 )
 
-from db.postgres import get_session
+from db.db import get_session
 from db.redis import get_redis
 from schemas.inspect import Ping, DatabaseStatus, Status, RedisStatus
 
