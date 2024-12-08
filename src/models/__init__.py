@@ -1,4 +1,4 @@
-from db.postgres import Base
+from db.db import Base
 
 from .entity import User
 
