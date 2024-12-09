@@ -8,6 +8,7 @@ from starlette import status
 from api.v1 import api_router as api_v1_router
 from core.config import settings
 from db import redis
+from exceptions.auth_exceptions import InvalidCredentialsError
 from exceptions.user_exceptions import UserAlreadyExistsError
 
 
@@ -39,5 +40,15 @@ async def user_already_exists_exception_handler(
 ):
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": exc.message},
+    )
+
+
+@app.exception_handler(InvalidCredentialsError)
+async def invalid_credentials_exception_handler(
+    request: Request, exc: InvalidCredentialsError
+):
+    return JSONResponse(
+        status_code=status.HTTP_401_UNAUTHORIZED,
         content={"detail": exc.message},
     )

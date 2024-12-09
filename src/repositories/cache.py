@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any
+
 from redis.asyncio import Redis
+
 
 class CacheRepository(ABC):
     @abstractmethod
@@ -8,7 +10,9 @@ class CacheRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def set(self, key: str, value: Any, expire: int | None = None) -> None:
+    async def set(
+        self, key: str, value: Any, expire: int | None = None
+    ) -> None:
         raise NotImplementedError
 
 
@@ -17,7 +21,10 @@ class RedisCacheRepository(CacheRepository):
         self.redis = redis
 
     async def get(self, key: str):
-        return await self.redis.get(key)
+        result = await self.redis.get(key)
+        if result:
+            return result.decode("utf-8")
+        return None
 
-    async def set(self, key: str, value: str, expire: int | None = None):
-        await self.redis.set(key, value, ex=expire)
+    async def set(self, key: str, value: Any, expire: int | None = None):
+        await self.redis.set(key, str(value), ex=expire)

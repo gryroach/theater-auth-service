@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, String
+from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.sql import func
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -25,3 +25,10 @@ class User(Base):
 
     def __repr__(self) -> str:
         return f"<User {self.login}>"
+
+
+class LoginHistory(Base):
+    user_id = Column(String, ForeignKey("user.id"), nullable=False)
+    ip_address = Column(String(50))
+    user_agent = Column(String(255))
+    login_time = Column(DateTime, default=func.now())
