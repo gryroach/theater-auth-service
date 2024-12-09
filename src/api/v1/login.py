@@ -12,6 +12,7 @@ from schemas.entity import (
     UserInDB,
 )
 from services.auth import AuthService, get_auth_service
+from services.token_service import TokenService, get_token_service
 
 router = APIRouter()
 

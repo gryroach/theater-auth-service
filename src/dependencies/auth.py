@@ -1,11 +1,15 @@
 import jwt
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
-from core.config import settings
 from db.db import get_session
+from exceptions.auth_exceptions import (
+    InvalidSessionError,
+    InvalidTokenError,
+    TokenExpiredError,
+    UserNotFoundError,
+)
 from repositories.user import UserRepository
 from schemas.entity import UserInDB
 from services.jwt_service import JWTService, get_jwt_service
@@ -25,29 +29,15 @@ async def get_current_user(
         user_id = payload.get("user")
         session_version = payload.get("session_version")
     except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired",
-        )
+        raise TokenExpiredError("Token expired")
     except jwt.InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
-        )
+        raise InvalidTokenError("Invalid token")
 
     current_version = await token_service.get_session_version(user_id)
     if current_version is None or int(current_version) != int(session_version):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Session is invalid or expired",
-        )
+        raise InvalidSessionError("Session is invalid or expired")
 
     user_repo = UserRepository()
     user = await user_repo.get(db, user_id)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
-        )
-
-    return user
+        raise UserNotFoundError("User not found")

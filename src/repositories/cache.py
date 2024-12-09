@@ -27,4 +27,8 @@ class RedisCacheRepository(CacheRepository):
         return None
 
     async def set(self, key: str, value: Any, expire: int | None = None):
-        await self.redis.set(key, str(value), ex=expire)
+        await self.redis.set(key, value, ex=expire)
+
+        result = await self.redis.get(key)
+        if not result:
+            raise RuntimeError("Failed to set key in Redis")
