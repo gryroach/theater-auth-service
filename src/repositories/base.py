@@ -4,9 +4,10 @@ from uuid import UUID
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import delete, inspect, select
+from sqlalchemy import update as sqlalchemy_update
 from sqlalchemy.exc import NoResultFound
-from sqlalchemy import select, delete, update as sqlalchemy_update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.db import Base
 
@@ -34,13 +35,14 @@ class Repository(ABC):
         raise NotImplementedError
 
 
-ModelType = TypeVar("ModelType", bound=Base) # type: ignore
+ModelType = TypeVar("ModelType", bound=Base)  # type: ignore
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
-class RepositoryDB(Repository,
-                   Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
+class RepositoryDB(
+    Repository, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
+):
     def __init__(self, model: Type[ModelType]):
         self._model = model
 
@@ -48,6 +50,23 @@ class RepositoryDB(Repository,
         statement = select(self._model).where(self._model.id == pk)
         results = await db.execute(statement=statement)
         return results.scalar_one_or_none()
+
+    async def get_by_field(self, db: AsyncSession, field: str, value: Any):
+        mapper = inspect(self._model)
+        if field not in mapper.columns:
+            raise ValueError(f"Поле '{field}' не существует")
+
+        column = mapper.columns[field]
+        if not column.unique and not column.primary_key:
+            raise ValueError(
+                f"Поле '{field}' не является уникальным или ключевым."
+            )
+
+        statement = select(self._model).where(
+            getattr(self._model, field) == value
+        )
+        result = await db.execute(statement)
+        return result.scalar_one_or_none()
 
     async def get_multi(
         self, db: AsyncSession, *, skip=0, limit=100
@@ -57,7 +76,8 @@ class RepositoryDB(Repository,
         return results.scalars().all()
 
     async def create(
-            self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
+        self, db: AsyncSession, *, obj_in: CreateSchemaType
+    ) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self._model(**obj_in_data)
         db.add(db_obj)
@@ -70,14 +90,14 @@ class RepositoryDB(Repository,
         db: AsyncSession,
         *,
         db_obj: ModelType,
-        obj_in: UpdateSchemaType | dict[str, Any]
+        obj_in: UpdateSchemaType | dict[str, Any],
     ) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         query = (
             sqlalchemy_update(self._model)
             .where(self._model.id == db_obj.id)
             .values(**obj_in_data)
-            .execution_options(synchronize_session='fetch')
+            .execution_options(synchronize_session="fetch")
         )
         await db.execute(query)
         await db.commit()

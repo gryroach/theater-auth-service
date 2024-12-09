@@ -12,7 +12,7 @@ class CacheRepository(ABC):
         raise NotImplementedError
 
 
-class RedisCache(CacheRepository):
+class RedisCacheRepository(CacheRepository):
     def __init__(self, redis: Redis):
         self.redis = redis
 

@@ -9,8 +9,3 @@ from schemas.entity import UserCreate, UserInDB
 class UserRepository(RepositoryDB[User, UserCreate, UserInDB]):
     def __init__(self):
         super().__init__(User)
-
-    async def get_by_field(self, db: AsyncSession, field: str, value: str):
-        statement = select(self._model).where(getattr(self._model, field) == value)
-        result = await db.execute(statement)
-        return result.scalar_one_or_none()
