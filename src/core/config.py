@@ -1,11 +1,13 @@
 from logging import config as logging_config
 
+from dotenv import find_dotenv
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from core.logger import LOGGING
 
 logging_config.dictConfig(LOGGING)
+DOTENV_PATH = find_dotenv(".env")
 
 
 class AppSettings(BaseSettings):
@@ -29,7 +31,7 @@ class AppSettings(BaseSettings):
     test_redis_db: int = Field(default=0)
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=DOTENV_PATH,
         env_file_encoding="utf-8",
     )
 
