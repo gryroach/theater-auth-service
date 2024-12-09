@@ -11,7 +11,7 @@ class RolePermissions(BaseModel):
 
 class Role(BaseModel):
     name: str
-    role: RolePermissions
+    permissions: RolePermissions
 
     def __str__(self):
         return self.name
@@ -20,7 +20,7 @@ class Role(BaseModel):
 class Roles:
     admin = Role(
         name="admin",
-        role=RolePermissions(
+        permissions=RolePermissions(
             view_regular_movies=True,
             view_premium_movies=True,
             create_movies=True,
@@ -30,7 +30,7 @@ class Roles:
     )
     moderator = Role(
         name="moderator",
-        role=RolePermissions(
+        permissions=RolePermissions(
             view_regular_movies=True,
             view_premium_movies=True,
             create_movies=True,
@@ -40,7 +40,7 @@ class Roles:
     )
     regular_user = Role(
         name="regular_user",
-        role=RolePermissions(
+        permissions=RolePermissions(
             view_regular_movies=True,
             view_premium_movies=False,
             create_movies=False,
@@ -50,7 +50,7 @@ class Roles:
     )
     premium_user = Role(
         name="premium_user",
-        role=RolePermissions(
+        permissions=RolePermissions(
             view_regular_movies=True,
             view_premium_movies=True,
             create_movies=False,
