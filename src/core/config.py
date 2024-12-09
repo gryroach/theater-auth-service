@@ -30,6 +30,12 @@ class AppSettings(BaseSettings):
     test_redis_port: int = Field(default=6379)
     test_redis_db: int = Field(default=0)
 
+    # Настройки аутентификации
+    ACCESS_TOKEN_EXPIRE_DAYS: int = Field(default=7)
+    REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=30)
+    secret_key: str = Field(default="your_secret_key")
+    jwt_algorithm: str = Field(default="HS256")
+
     model_config = SettingsConfigDict(
         env_file=DOTENV_PATH,
         env_file_encoding="utf-8",
