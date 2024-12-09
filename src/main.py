@@ -14,7 +14,7 @@ from exceptions.user_exceptions import UserAlreadyExistsError
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    redis.redis = Redis(host=settings.redis_host, port=settings.redis_port)
+    redis.redis = Redis.from_url(settings.redis_url)
     try:
         yield
     finally:
