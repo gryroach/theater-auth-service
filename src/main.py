@@ -1,19 +1,23 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from fastapi.responses import ORJSONResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse, ORJSONResponse
 from redis.asyncio import Redis
+from starlette import status
 
 from api.v1 import api_router as api_v1_router
 from core.config import settings
 from db import redis
+from exceptions.user_exceptions import UserAlreadyExistsError
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     redis.redis = Redis(host=settings.redis_host, port=settings.redis_port)
-    yield
-    await redis.redis.close()
+    try:
+        yield
+    finally:
+        await redis.redis.close()
 
 
 app = FastAPI(
@@ -27,3 +31,13 @@ app = FastAPI(
 )
 
 app.include_router(api_v1_router, prefix="/api/v1")
+
+
+@app.exception_handler(UserAlreadyExistsError)
+async def user_already_exists_exception_handler(
+    request: Request, exc: UserAlreadyExistsError
+):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": exc.message},
+    )

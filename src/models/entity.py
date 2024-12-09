@@ -1,23 +1,11 @@
-import uuid
-from sqlalchemy.sql import func
-
 from sqlalchemy import Column, DateTime, String
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.sql import func
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from db.postgres import Base
+from db.db import Base
 
 
 class User(Base):
-    __tablename__ = "users"
-
-    id = Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4,
-        unique=True,
-        nullable=False,
-    )
     login = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     first_name = Column(String(50))
