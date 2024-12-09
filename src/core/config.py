@@ -18,10 +18,15 @@ class AppSettings(BaseSettings):
     postgres_port: int = Field(default=5432)
     postgres_db: str = Field(default="movies_auth")
     echo_queries: bool = Field(default=False)
+    test_db: str = "test_db"
 
     # Настройки Redis
     redis_host: str = Field(default="redis")
     redis_port: int = Field(default=6379)
+    redis_db: int = Field(default=1)
+    test_redis_host: str = Field(default="redis")
+    test_redis_port: int = Field(default=6379)
+    test_redis_db: int = Field(default=0)
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -36,6 +41,19 @@ class AppSettings(BaseSettings):
             f"{self.postgres_host}:"
             f"{self.postgres_port}/{self.postgres_db}"
         )
+
+    @property
+    def test_database_dsn(self) -> str:
+        return (
+            f"postgresql+asyncpg://{self.postgres_user}:"
+            f"{self.postgres_password}@"
+            f"{self.postgres_host}:"
+            f"{self.postgres_port}/{self.test_db}"
+        )
+
+    @property
+    def redis_url(self) -> str:
+        return f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
 
 
 settings = AppSettings()

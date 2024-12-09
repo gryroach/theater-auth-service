@@ -42,6 +42,8 @@ services:
     restart: always
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "6380:6379"
     healthcheck:
       test: redis-cli ping
       interval: 1s
