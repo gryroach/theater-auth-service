@@ -20,7 +20,7 @@ class AppSettings(BaseSettings):
     postgres_port: int = Field(default=5432)
     postgres_db: str = Field(default="movies_auth")
     echo_queries: bool = Field(default=False)
-    test_db: str = "test_db"
+    test_db: str = Field(default="test_db")
 
     # Настройки Redis
     redis_host: str = Field(default="redis")
@@ -33,8 +33,9 @@ class AppSettings(BaseSettings):
     # Настройки аутентификации
     ACCESS_TOKEN_EXPIRE_DAYS: int = Field(default=7)
     REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=30)
-    secret_key: str = Field(default="your_secret_key")
-    jwt_algorithm: str = Field(default="HS256")
+    private_key: str = Field(default="./keys/private_key.pem")
+    public_key: str = Field(default="./keys/public_key.pem")
+    jwt_algorithm: str = Field(default="RS256")
 
     model_config = SettingsConfigDict(
         env_file=DOTENV_PATH,

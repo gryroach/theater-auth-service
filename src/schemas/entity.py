@@ -17,24 +17,25 @@ class UserInDB(BaseModel):
     last_name: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class LoginHistoryCreate(BaseModel):
-    user_id: str
+    user_id: UUID
     ip_address: str | None
     user_agent: str | None
 
 
 class LoginHistoryInDB(LoginHistoryCreate):
-    login_time: str
+    login_time: datetime
+
+    class Config:
+        from_attributes = True
 
 
 class LoginRequest(BaseModel):
     login: str
     password: str
-    access_exp: int | None = None
-    refresh_exp: int | None = None
 
 
 class LoginResponse(BaseModel):
@@ -43,4 +44,4 @@ class LoginResponse(BaseModel):
     token_type: str = "bearer"
 
     class Config:
-        orm_mode = True
+        from_attributes = True

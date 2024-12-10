@@ -7,4 +7,4 @@ class LoginHistoryRepository(
     RepositoryDB[LoginHistory, LoginHistoryCreate, LoginHistoryInDB]
 ):
     def __init__(self):
-        super().__init__(LoginHistory)
+        super().__init__(model=LoginHistory)

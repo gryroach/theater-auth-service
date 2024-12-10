@@ -1,33 +1,35 @@
 from exceptions.base import CustomException
 
 
-class InvalidCredentialsError(Exception):
+class AuthError(CustomException):
+    """Базовое исключение для всех ошибок аутентификации."""
+
+    pass
+
+
+class InvalidCredentialsError(AuthError):
     """Ошибка при некорректных учетных данных."""
 
-    def __init__(self, message: str = "Invalid login or password"):
-        self.message = message
-        super().__init__(self.message)
+    pass
 
 
-class TokenExpiredError(CustomException):
+class TokenExpiredError(AuthError):
     """Ошибка истечения срока действия токена."""
 
     pass
 
 
-class InvalidTokenError(CustomException):
+class InvalidTokenError(AuthError):
     """Ошибка недействительного токена."""
 
     pass
 
 
-class InvalidSessionError(CustomException):
+class InvalidSessionError(AuthError):
     """Ошибка недействительной или истекшей сессии."""
 
     pass
 
 
-class UserNotFoundError(CustomException):
-    """Ошибка, если пользователь не найден."""
-
-    pass
+class InvalidAuthenticationScheme(AuthError):
+    """Ошибка неправильной аутентификации."""
