@@ -1,6 +1,6 @@
 from db.db import Base
 
-from .entity import User
+from .user import User
 
 __all__ = [
     "Base",

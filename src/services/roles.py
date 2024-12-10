@@ -1,20 +1,4 @@
-from pydantic import BaseModel
-
-
-class RolePermissions(BaseModel):
-    view_regular_movies: bool
-    view_premium_movies: bool
-    create_movies: bool
-    edit_movies: bool
-    delete_movies: bool
-
-
-class Role(BaseModel):
-    name: str
-    permissions: RolePermissions
-
-    def __str__(self):
-        return self.name
+from schemas.role import Role, RolePermissions
 
 
 class Roles:
