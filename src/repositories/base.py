@@ -75,6 +75,22 @@ class RepositoryDB(
         results = await db.execute(statement=statement)
         return results.scalars().all()
 
+    async def get_by_field_multi(
+        self, db: AsyncSession, field: str, value: Any, skip=0, limit=100
+    ) -> list[ModelType]:
+        mapper = inspect(self._model)
+        if field not in mapper.columns:
+            raise ValueError(f"Поле '{field}' не существует")
+
+        statement = (
+            select(self._model)
+            .where(getattr(self._model, field) == value)
+            .offset(skip)
+            .limit(limit)
+        )
+        results = await db.execute(statement)
+        return results.scalars().all()
+
     async def create(
         self, db: AsyncSession, *, obj_in: CreateSchemaType
     ) -> ModelType:

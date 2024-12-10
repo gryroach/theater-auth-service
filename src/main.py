@@ -8,7 +8,8 @@ from starlette import status
 from api.v1 import api_router as api_v1_router
 from core.config import settings
 from db import redis
-from exceptions.user_exceptions import UserAlreadyExistsError
+from exceptions.auth_exceptions import AuthError
+from exceptions.user_exceptions import UserError
 
 
 @asynccontextmanager
@@ -33,11 +34,17 @@ app = FastAPI(
 app.include_router(api_v1_router, prefix="/api/v1")
 
 
-@app.exception_handler(UserAlreadyExistsError)
-async def user_already_exists_exception_handler(
-    request: Request, exc: UserAlreadyExistsError
-):
+@app.exception_handler(AuthError)
+async def auth_exception_handler(request: Request, exc: AuthError):
+    return JSONResponse(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        content={"detail": str(exc)},
+    )
+
+
+@app.exception_handler(UserError)
+async def user_exception_handler(request: Request, exc: UserError):
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
-        content={"detail": exc.message},
+        content={"detail": str(exc)},
     )

@@ -1,4 +1,19 @@
-class UserAlreadyExistsError(Exception):
-    def __init__(self, message: str = "User already exists"):
-        self.message = message
-        super().__init__(self.message)
+from exceptions.base import CustomException
+
+
+class UserError(Exception):
+    """Базовое исключение для всех ошибок, связанных с пользователями."""
+
+    pass
+
+
+class UserAlreadyExistsError(UserError):
+    """Ошибка, если пользователь уже существует"""
+
+    pass
+
+
+class UserNotFoundError(UserError):
+    """Ошибка, если пользователь не найден."""
+
+    pass
