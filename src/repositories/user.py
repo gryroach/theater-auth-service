@@ -1,6 +1,6 @@
-from models import User
+from models.user import User
 from repositories.base import RepositoryDB
-from schemas.entity import UserCreate, UserInDB
+from schemas.user import UserCreate, UserInDB
 
 
 class UserRepository(RepositoryDB[User, UserCreate, UserInDB]):

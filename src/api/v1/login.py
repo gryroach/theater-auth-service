@@ -4,12 +4,8 @@ from starlette import status
 
 from db.db import get_session
 from dependencies.auth import get_current_user
-from schemas.entity import (
-    LoginHistoryInDB,
-    LoginRequest,
-    LoginResponse,
-    UserInDB,
-)
+from schemas.login_history import LoginHistoryInDB, LoginRequest, LoginResponse
+from schemas.user import UserInDB
 from services.auth import AuthService, get_auth_service
 from services.login_history import (
     LoginHistoryService,

@@ -2,7 +2,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from repositories.login_history import LoginHistoryRepository
-from schemas.entity import LoginHistoryCreate
+from schemas.login_history import LoginHistoryCreate
 
 
 class LoginHistoryService:

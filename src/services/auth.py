@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,7 +6,7 @@ from db.db import get_session
 from exceptions.auth_exceptions import InvalidCredentialsError
 from repositories.login_history import LoginHistoryRepository
 from repositories.user import UserRepository
-from schemas.entity import LoginHistoryCreate
+from schemas.login_history import LoginHistoryCreate
 from services.jwt_service import JWTService, get_jwt_service
 from services.token_service import TokenService, get_token_service
 

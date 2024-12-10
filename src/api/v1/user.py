@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from db.db import get_session
-from schemas.entity import UserCreate, UserInDB
+from schemas.user import UserCreate, UserInDB
 from services.user import UserService, get_user_service
 
 router = APIRouter()

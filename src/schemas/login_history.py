@@ -4,22 +4,6 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-class UserCreate(BaseModel):
-    login: str
-    password: str
-    first_name: str
-    last_name: str
-
-
-class UserInDB(BaseModel):
-    id: UUID
-    first_name: str
-    last_name: str
-
-    class Config:
-        from_attributes = True
-
-
 class LoginHistoryCreate(BaseModel):
     user_id: UUID
     ip_address: str | None

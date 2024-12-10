@@ -1,4 +1,4 @@
-from sqlalchemy import UUID, Column, DateTime, ForeignKey, String
+from sqlalchemy import Column, DateTime, String
 from sqlalchemy.orm import validates
 from sqlalchemy.sql import func
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -34,10 +34,3 @@ class User(Base):
 
     def __repr__(self) -> str:
         return f"<User {self.login}>"
-
-
-class LoginHistory(Base):
-    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
-    ip_address = Column(String(50))
-    user_agent = Column(String(255))
-    login_time = Column(DateTime, default=func.now())

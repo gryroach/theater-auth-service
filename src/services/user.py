@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from exceptions.user_exceptions import UserAlreadyExistsError
 from repositories.user import UserRepository
-from schemas.entity import UserCreate, UserInDB
+from schemas.user import UserCreate, UserInDB
 from services.token_service import TokenService, get_token_service
 
 

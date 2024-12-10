@@ -10,7 +10,7 @@ from exceptions.auth_exceptions import (
     TokenExpiredError,
 )
 from exceptions.user_exceptions import UserNotFoundError
-from schemas.entity import UserInDB
+from schemas.user import UserInDB
 from services.jwt_service import JWTService, get_jwt_service
 from services.user import UserService, get_user_service
 
