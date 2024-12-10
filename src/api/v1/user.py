@@ -6,6 +6,7 @@ from starlette import status
 
 from db.db import get_session
 from exceptions.user_exceptions import UserDoesNotExistsError
+from schemas.base import ErrorResponse
 from schemas.role import Role, UpdateRole
 from schemas.user import UserCreate, UserInDB
 from services.user import UserService, get_user_service
@@ -31,6 +32,12 @@ async def create_user(
     "/{user_id}/role",
     response_model=Role,
     status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorResponse,
+            "description": "User not found",
+        }
+    },
 )
 async def get_user_role(
     user_id: UUID,
@@ -51,6 +58,12 @@ async def get_user_role(
     "/{user_id}/role",
     response_model=Role,
     status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorResponse,
+            "description": "User not found",
+        }
+    },
 )
 async def set_user_role(
     user_id: UUID,

@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+from sqlalchemy.pool import NullPool
 
 from core.config import settings
 from main import app
@@ -49,7 +50,9 @@ async def create_database() -> None:
 
 @pytest_asyncio.fixture(scope="session")
 async def engine() -> AsyncGenerator[AsyncEngine, None]:
-    engine_ = create_async_engine(settings.test_database_dsn, future=True)
+    engine_ = create_async_engine(
+        settings.test_database_dsn, future=True, poolclass=NullPool
+    )
     try:
         yield engine_
     finally:
@@ -87,9 +90,7 @@ async def db_transaction(
 async def session(
     db_connection: AsyncConnection, monkeypatch: MonkeyPatch
 ) -> AsyncGenerator[AsyncSession, None]:
-    session_maker = async_sessionmaker(
-        db_connection, class_=AsyncSession, expire_on_commit=False
-    )
+    session_maker = async_sessionmaker(db_connection, expire_on_commit=False)
     monkeypatch.setattr("db.db.async_session", session_maker)
     async with session_maker() as session:
         yield session
