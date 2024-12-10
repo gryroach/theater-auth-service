@@ -13,11 +13,14 @@ router = APIRouter()
     "/signup",
     response_model=UserInDB,
     status_code=status.HTTP_201_CREATED,
+    description="Регистрация пользователя",
+    summary="Регистрация пользователя",
 )
 async def create_user(
     user_create: UserCreate,
     user_service: UserService = Depends(get_user_service),
     db: AsyncSession = Depends(get_session),
 ) -> UserInDB:
+    """Регистрация пользователя."""
     user = await user_service.register_user(db, user_create)
     return user

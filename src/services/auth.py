@@ -41,8 +41,6 @@ class AuthService:
         password: str,
         ip_address: str,
         user_agent: str,
-        access_exp: int | None = None,
-        refresh_exp: int | None = None,
     ):
         user = await self.authenticate_user(db, login, password)
 
@@ -55,26 +53,13 @@ class AuthService:
                 str(user.id), session_version
             )
 
-        access_expires = (
-            timedelta(seconds=access_exp)
-            if access_exp
-            else timedelta(days=settings.ACCESS_TOKEN_EXPIRE_DAYS)
-        )
-        refresh_expires = (
-            timedelta(seconds=refresh_exp)
-            if refresh_exp
-            else timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
-        )
-
         access_token = self.jwt_service.create_access_token(
             user_id=str(user.id),
             session_version=session_version,
-            expires_delta=access_expires,
         )
         refresh_token = self.jwt_service.create_refresh_token(
             user_id=str(user.id),
             session_version=session_version,
-            expires_delta=refresh_expires,
         )
 
         await self.history_repo.create(
