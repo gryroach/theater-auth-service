@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class LoginHistoryCreate(BaseModel):
@@ -13,8 +13,7 @@ class LoginHistoryCreate(BaseModel):
 class LoginHistoryInDB(LoginHistoryCreate):
     login_time: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class LoginRequest(BaseModel):
@@ -27,5 +26,4 @@ class LoginResponse(BaseModel):
     refresh_token: str
     token_type: str = "bearer"
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

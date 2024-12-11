@@ -9,7 +9,7 @@ from exceptions.auth_exceptions import (
     InvalidTokenError,
     TokenExpiredError,
 )
-from exceptions.user_exceptions import UserNotFoundError
+from exceptions.user_exceptions import UserDoesNotExistsError
 from schemas.user import UserInDB
 from services.jwt_service import JWTService, get_jwt_service
 from services.user import UserService, get_user_service
@@ -51,5 +51,5 @@ async def get_current_user(
 
     user = await user_service.user_repo.get(db, user_id)
     if not user:
-        raise UserNotFoundError("User not found")
+        raise UserDoesNotExistsError("User not found")
     return user

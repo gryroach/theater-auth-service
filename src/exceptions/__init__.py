@@ -5,11 +5,11 @@ from .auth_exceptions import (
     InvalidTokenError,
     TokenExpiredError,
 )
-from .user_exceptions import UserAlreadyExistsError, UserNotFoundError
+from .user_exceptions import UserAlreadyExistsError, UserDoesNotExistsError
 
 __all__ = [
     "UserAlreadyExistsError",
-    "UserNotFoundError",
+    "UserDoesNotExistsError",
     "InvalidAuthenticationScheme",
     "InvalidCredentialsError",
     "InvalidSessionError",
