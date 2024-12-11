@@ -46,7 +46,9 @@ class JWTService:
         return self._create_token(payload)
 
     def decode_token(self, token: str) -> dict:
-        """Декодирует JWT-токен с использованием публичного ключа (асимметричный)."""
+        """
+        Декодирует JWT-токен с использованием публичного ключа (асимметричный).
+        """
         return jwt.decode(
             token, self.public_key, algorithms=[self.algorithm], verify=True
         )

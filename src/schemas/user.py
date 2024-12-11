@@ -1,11 +1,15 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
+from werkzeug.security import generate_password_hash
 
 
-class UserCreate(BaseModel):
+class UserCredentials(BaseModel):
     login: str
     password: str
+
+
+class UserCreate(UserCredentials):
     first_name: str
     last_name: str
 
@@ -16,3 +20,19 @@ class UserInDB(BaseModel):
     last_name: str
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserData(BaseModel):
+    first_name: str
+    last_name: str
+
+
+class UserCredentialsUpdate(BaseModel):
+    login: str
+    old_password: str
+    new_password: str
+
+    @field_validator("new_password")
+    @classmethod
+    def replace_hyphen(cls, v: str) -> str:
+        return generate_password_hash(v)

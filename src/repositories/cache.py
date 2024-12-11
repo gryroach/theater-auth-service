@@ -15,6 +15,10 @@ class CacheRepository(ABC):
     ) -> None:
         raise NotImplementedError
 
+    @abstractmethod
+    async def delete(self, key: str) -> None:
+        raise NotImplementedError
+
 
 class RedisCacheRepository(CacheRepository):
     def __init__(self, redis: Redis):
@@ -32,3 +36,6 @@ class RedisCacheRepository(CacheRepository):
         result = await self.redis.get(key)
         if not result:
             raise RuntimeError("Failed to set key in Redis")
+
+    async def delete(self, key: str) -> None:
+        await self.redis.delete(key)

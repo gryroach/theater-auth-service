@@ -1,7 +1,7 @@
 from exceptions.base import CustomException
 
 
-class UserError(Exception):
+class UserError(CustomException):
     """Базовое исключение для всех ошибок, связанных с пользователями."""
 
     pass

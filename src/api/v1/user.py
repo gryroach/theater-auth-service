@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from db.db import get_session
+from dependencies.auth import JWTBearer
 from exceptions.user_exceptions import UserDoesNotExistsError
 from schemas.base import ErrorResponse
 from schemas.role import Role, UpdateRole
@@ -35,12 +36,15 @@ async def create_user(
     "/{user_id}/role",
     response_model=Role,
     status_code=status.HTTP_200_OK,
+    description="Получение роли пользователя",
+    summary="Получение роли пользователя",
     responses={
         status.HTTP_404_NOT_FOUND: {
             "model": ErrorResponse,
             "description": "User not found",
         }
     },
+    dependencies=[Depends(JWTBearer())],
 )
 async def get_user_role(
     user_id: UUID,
@@ -61,12 +65,15 @@ async def get_user_role(
     "/{user_id}/role",
     response_model=Role,
     status_code=status.HTTP_200_OK,
+    description="Изменение роли пользователя",
+    summary="Изменение роли пользователя",
     responses={
         status.HTTP_404_NOT_FOUND: {
             "model": ErrorResponse,
             "description": "User not found",
         }
     },
+    dependencies=[Depends(JWTBearer())],
 )
 async def set_user_role(
     user_id: UUID,

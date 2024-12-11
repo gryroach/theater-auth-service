@@ -1,15 +1,13 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, ORJSONResponse
+from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
-from starlette import status
 
 from api.v1 import api_router as api_v1_router
 from core.config import settings
 from db import redis
-from exceptions.auth_exceptions import AuthError
-from exceptions.user_exceptions import UserError
+from handlers import exception_handlers
 
 
 @asynccontextmanager
@@ -29,22 +27,7 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
+    exception_handlers=exception_handlers,
 )
 
 app.include_router(api_v1_router, prefix="/api/v1")
-
-
-@app.exception_handler(AuthError)
-async def auth_exception_handler(request: Request, exc: AuthError):
-    return JSONResponse(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        content={"detail": str(exc)},
-    )
-
-
-@app.exception_handler(UserError)
-async def user_exception_handler(request: Request, exc: UserError):
-    return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        content={"detail": str(exc)},
-    )

@@ -5,7 +5,10 @@ from db.redis import get_redis
 from repositories.cache import CacheRepository, RedisCacheRepository
 
 
-class TokenService:
+class SessionService:
+    """
+    Сервис управлениями сессиями пользователей в кэш-сервисе
+    """
     def __init__(self, cache: CacheRepository):
         self.cache = cache
 
@@ -17,7 +20,7 @@ class TokenService:
         key = f"session_version:{user_id}"
         return await self.cache.get(key)
 
-    async def invalidate_session(self, user_id: str):
+    async def invalidate_session(self, user_id: str) -> None:
         key = f"session_version:{user_id}"
         await self.cache.delete(key)
 
@@ -28,5 +31,7 @@ class TokenService:
         await self.cache.set(key, new_version)
 
 
-async def get_token_service(redis: Redis = Depends(get_redis)) -> TokenService:
-    return TokenService(RedisCacheRepository(redis))
+async def get_session_service(
+        redis: Redis = Depends(get_redis)
+) -> SessionService:
+    return SessionService(RedisCacheRepository(redis))
