@@ -17,6 +17,7 @@ RUN uv sync --frozen --no-cache
 
 # Copy the application into the container.
 COPY ./src .
+COPY ./keys ./keys
 
 # Run the application.
 ENTRYPOINT ["bash", "entrypoint.sh"]
