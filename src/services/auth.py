@@ -54,10 +54,12 @@ class AuthService:
         access_token = self.jwt_service.create_access_token(
             user_id=str(user.id),
             session_version=session_version,
+            role=user.role,
         )
         refresh_token = self.jwt_service.create_refresh_token(
             user_id=str(user.id),
             session_version=session_version,
+            role=user.role,
         )
 
         await self.history_repo.create(

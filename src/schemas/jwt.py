@@ -6,4 +6,5 @@ class JwtTokenPayload(BaseModel):
     session_version: int
     iat: int
     exp: int
+    role: str
     type: str

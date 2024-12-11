@@ -23,24 +23,30 @@ class JWTService:
         """Создает JWT-токен с подписью приватным ключом (асимметричный)."""
         return jwt.encode(payload, self.private_key, algorithm=self.algorithm)
 
-    def create_access_token(self, user_id: str, session_version: int) -> str:
+    def create_access_token(
+            self, user_id: str, session_version: int, role: str
+    ) -> str:
         now = datetime.now(timezone.utc)
         payload = {
             "user": user_id,
             "session_version": session_version,
             "iat": now,
             "exp": now + self.access_token_expire,
+            "role": role,
             "type": "access",
         }
         return self._create_token(payload)
 
-    def create_refresh_token(self, user_id: str, session_version: int) -> str:
+    def create_refresh_token(
+            self, user_id: str, session_version: int, role: str
+    ) -> str:
         now = datetime.now(timezone.utc)
         payload = {
             "user": user_id,
             "session_version": session_version,
             "iat": now,
             "exp": now + self.refresh_token_expire,
+            "role": role,
             "type": "refresh",
         }
         return self._create_token(payload)
