@@ -7,8 +7,10 @@ from core.config import settings
 
 class JWTService:
     def __init__(self):
-        self.private_key = open(settings.private_key, "r").read()
-        self.public_key = open(settings.public_key, "r").read()
+        with open(settings.private_key, "r") as private_key_file:
+            self.private_key = private_key_file.read()
+        with open(settings.public_key, "r") as public_key_file:
+            self.public_key = public_key_file.read()
         self.algorithm = settings.jwt_algorithm
         self.access_token_expire = timedelta(
             days=settings.ACCESS_TOKEN_EXPIRE_DAYS
