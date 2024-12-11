@@ -33,3 +33,11 @@ class InvalidSessionError(AuthError):
 
 class InvalidAuthenticationScheme(AuthError):
     """Ошибка неправильной аутентификации."""
+
+    pass
+
+
+class InvalidAlgorithmError(AuthError):
+    """Ошибка алгоритма шифрования."""
+
+    pass

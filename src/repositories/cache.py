@@ -15,6 +15,10 @@ class CacheRepository(ABC):
     ) -> None:
         raise NotImplementedError
 
+    @abstractmethod
+    async def exists(self, key: str) -> bool:
+        raise NotImplementedError
+
 
 class RedisCacheRepository(CacheRepository):
     def __init__(self, redis: Redis):
@@ -32,3 +36,6 @@ class RedisCacheRepository(CacheRepository):
         result = await self.redis.get(key)
         if not result:
             raise RuntimeError("Failed to set key in Redis")
+
+    async def exists(self, key: str) -> bool:
+        return await self.redis.exists(key) > 0

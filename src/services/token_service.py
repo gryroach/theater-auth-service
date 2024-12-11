@@ -17,15 +17,25 @@ class TokenService:
         key = f"session_version:{user_id}"
         return await self.cache.get(key)
 
-    async def invalidate_session(self, user_id: str):
-        key = f"session_version:{user_id}"
-        await self.cache.delete(key)
+    async def invalidate_refresh_token(self, refresh_token: str, ttl: int):
+        key = f"invalid:refresh:{refresh_token}"
+        await self.cache.set(key, 1, expire=ttl)
+
+    async def is_refresh_token_invalid(self, refresh_token: str) -> bool:
+        key = f"invalid:refresh:{refresh_token}"
+        return await self.cache.exists(key)
 
     async def increment_session_version(self, user_id: str) -> None:
         key = f"session_version:{user_id}"
         current_version = await self.get_session_version(user_id)
         new_version = (int(current_version) or 0) + 1
         await self.cache.set(key, new_version)
+
+    async def logout(self, refresh_token: str, ttl: int) -> None:
+        await self.invalidate_refresh_token(refresh_token, ttl)
+
+    async def logout_all(self, user_id: str) -> None:
+        await self.increment_session_version(user_id)
 
 
 async def get_token_service(redis: Redis = Depends(get_redis)) -> TokenService:
