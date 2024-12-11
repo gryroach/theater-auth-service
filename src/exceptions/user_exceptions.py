@@ -17,3 +17,9 @@ class UserNotFoundError(UserError):
     """Ошибка, если пользователь не найден."""
 
     pass
+
+  
+class UserDoesNotExistsError(UserError):
+    """Ошибка, если пользователь не существует."""
+    
+    pass

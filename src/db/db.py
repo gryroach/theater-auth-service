@@ -7,7 +7,8 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import as_declarative
 
 from core.config import settings
 

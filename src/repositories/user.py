@@ -1,4 +1,4 @@
-from models.user import User
+from models import User
 from repositories.base import RepositoryDB
 from schemas.user import UserCreate, UserInDB
 
