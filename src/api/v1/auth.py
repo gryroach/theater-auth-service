@@ -68,14 +68,12 @@ async def get_login_history(
 )
 async def logout(
     logout_token_request: TokenRefreshRequest,
-    current_user: UserInDB = Depends(get_current_user),
     auth_service: AuthService = Depends(get_auth_service),
 ) -> dict:
     """
     Выход из текущей сессии. Инвалидация токена.
     """
     await auth_service.logout(
-        user_id=str(current_user.id),
         refresh_token=logout_token_request.refresh_token,
     )
     return {"message": "Successfully logged out from the current session."}

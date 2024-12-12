@@ -4,12 +4,14 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
+from core.enums import PayloadKeys, TokenTypes
 from exceptions.auth_exceptions import (
     InvalidCredentialsError,
     InvalidSessionError,
 )
 from repositories.user import UserRepository
 from schemas.login_history import LoginHistoryCreate
+from schemas.refresh import TokenResponse
 from services.jwt_service import JWTService, get_jwt_service
 from services.login_history import (
     LoginHistoryService,
@@ -75,31 +77,27 @@ class AuthService:
                 user_agent=user_agent,
             ),
         )
-        return {"access_token": access_token, "refresh_token": refresh_token}
+        return TokenResponse(
+            access_token=access_token, refresh_token=refresh_token
+        )
 
-    async def logout(self, user_id: str, refresh_token: str):
+    async def logout(self, refresh_token: str):
         if await self.token_service.is_refresh_token_invalid(refresh_token):
             raise InvalidSessionError("This refresh token is invalid.")
-        decoded = self.jwt_service.validate_token_type(
-            refresh_token, "refresh"
-        )
-        self.jwt_service.validate_user_and_version(
-            refresh_token, user_id, decoded["session_version"]
-        )
         ttl = int(self.refresh_ttl.total_seconds())
         await self.token_service.logout(refresh_token, ttl)
 
     async def logout_all(self, user_id: str):
         await self.token_service.logout_all(user_id)
 
-    async def refresh_tokens(self, refresh_token: str) -> dict:
+    async def refresh_tokens(self, refresh_token: str) -> TokenResponse:
         if await self.token_service.is_refresh_token_invalid(refresh_token):
             raise InvalidSessionError("This refresh token is invalid.")
         decoded = self.jwt_service.validate_token_type(
-            refresh_token, "refresh"
+            refresh_token, TokenTypes.REFRESH
         )
-        user_id = decoded["user"]
-        session_version = decoded["session_version"]
+        user_id = decoded[PayloadKeys.USER]
+        session_version = decoded[PayloadKeys.SESSION_VERSION]
         current_version = await self.token_service.get_session_version(user_id)
 
         if current_version != session_version:
@@ -107,14 +105,14 @@ class AuthService:
 
         ttl = int(self.refresh_ttl.total_seconds())
         await self.token_service.invalidate_refresh_token(refresh_token, ttl)
-        return {
-            "access_token": self.jwt_service.create_access_token(
+        return TokenResponse(
+            access_token=self.jwt_service.create_access_token(
                 user_id, current_version
             ),
-            "refresh_token": self.jwt_service.create_refresh_token(
+            refresh_token=self.jwt_service.create_refresh_token(
                 user_id, current_version
             ),
-        }
+        )
 
 
 async def get_auth_service(
