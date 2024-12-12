@@ -37,6 +37,10 @@ class AppSettings(BaseSettings):
     public_key: str = Field(default="./keys/public_key.pem")
     jwt_algorithm: str = Field(default="RS256")
 
+    # Константы
+    SESSION_VERSION_KEY_TEMPLATE = "session_version:{}"
+    INVALID_REFRESH_TOKEN_TEMPLATE = "invalid:refresh:{}"
+
     model_config = SettingsConfigDict(
         env_file=DOTENV_PATH,
         env_file_encoding="utf-8",
