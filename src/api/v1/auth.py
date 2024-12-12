@@ -1,17 +1,20 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from db.db import get_session
-from dependencies.auth import get_current_user
-from schemas.login_history import LoginHistoryInDB, LoginRequest, LoginResponse
+from dependencies.auth import get_current_user, JWTBearer
+from schemas.login import LoginHistoryInDB, LoginRequest, LoginResponse
 from schemas.refresh import TokenRefreshRequest, TokenResponse
-from schemas.user import UserInDB
+from schemas.user import UserCreate, UserInDB
 from services.auth import AuthService, get_auth_service
 from services.login_history import (
     LoginHistoryService,
     get_login_history_service,
 )
+from services.user import UserService, get_user_service
 
 router = APIRouter()
 
@@ -26,8 +29,8 @@ router = APIRouter()
 async def login(
     request: Request,
     login_request: LoginRequest,
-    db: AsyncSession = Depends(get_session),
-    auth_service: AuthService = Depends(get_auth_service),
+    db: Annotated[AsyncSession, Depends(get_session)],
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ):
     """Аутентификация пользователя."""
     ip_address = request.client.host
@@ -49,13 +52,15 @@ async def login(
     summary="История входов",
 )
 async def get_login_history(
-    db: AsyncSession = Depends(get_session),
-    current_user: UserInDB = Depends(get_current_user),
-    history_service: LoginHistoryService = Depends(get_login_history_service),
+    db: Annotated[AsyncSession, Depends(get_session)],
+    current_user: Annotated[UserInDB, Depends(get_current_user)],
+    history_service: Annotated[
+        LoginHistoryService, Depends(get_login_history_service)
+    ],
 ):
     """Получить историю входов текущего пользователя."""
     history = await history_service.get_user_history(
-        db=db, user_id=current_user.id
+        db, user_id=str(current_user.id)
     )
     return history
 
@@ -65,10 +70,11 @@ async def get_login_history(
     status_code=status.HTTP_200_OK,
     description="Выход из текущей сессии",
     summary="Выход из текущей сессии",
+    dependencies=[Depends(JWTBearer())],
 )
 async def logout(
     logout_token_request: TokenRefreshRequest,
-    auth_service: AuthService = Depends(get_auth_service),
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ) -> dict:
     """
     Выход из текущей сессии. Инвалидация токена.
@@ -88,7 +94,7 @@ async def logout(
 )
 async def refresh_tokens(
     refresh_request: TokenRefreshRequest,
-    auth_service: AuthService = Depends(get_auth_service),
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ) -> TokenResponse:
     """
     Обновляет Access-токен с использованием валидного Refresh-токена.
@@ -106,8 +112,8 @@ async def refresh_tokens(
     summary="Выход из всех устройств",
 )
 async def logout_all_devices(
-    current_user: UserInDB = Depends(get_current_user),
-    auth_service: AuthService = Depends(get_auth_service),
+    current_user: Annotated[UserInDB, Depends(get_current_user)],
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ) -> dict:
     """
     Выход из всех устройств, инвалидация всех токенов пользователя.
@@ -117,3 +123,20 @@ async def logout_all_devices(
         "message": "Successfully logged out from all devices.",
         "user_id": current_user.id,
     }
+
+
+@router.post(
+    "/signup",
+    response_model=UserInDB,
+    status_code=status.HTTP_201_CREATED,
+    description="Регистрация пользователя",
+    summary="Регистрация пользователя",
+)
+async def create_user(
+    user_create: UserCreate,
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    db: Annotated[AsyncSession, Depends(get_session)],
+) -> UserInDB:
+    """Регистрация пользователя."""
+    user = await user_service.register_user(db, user_create)
+    return user

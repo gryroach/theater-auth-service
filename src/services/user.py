@@ -1,3 +1,4 @@
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import Depends
@@ -45,7 +46,7 @@ class UserService:
     async def get_user_role(self, db: AsyncSession, user_id: UUID) -> Role:
         user = await self.user_repo.get(db, user_id)
         if not user:
-            raise UserDoesNotExistsError
+            raise UserDoesNotExistsError("User does not exists")
         return getattr(Roles, user.role)
 
     async def update_role(
@@ -53,7 +54,7 @@ class UserService:
     ) -> Role:
         user = await self.user_repo.get(db, user_id)
         if not user:
-            raise UserDoesNotExistsError
+            raise UserDoesNotExistsError("User does not exists")
         updated_user = await self.user_repo.update(
             db, db_obj=user, obj_in=new_role
         )
@@ -96,7 +97,7 @@ class UserService:
 
 
 async def get_user_service(
-    user_repo: UserRepository = Depends(),
-    token_service: SessionService = Depends(get_session_service),
+    user_repo: Annotated[UserRepository, Depends()],
+    token_service: Annotated[SessionService, Depends(get_session_service)],
 ) -> UserService:
     return UserService(user_repo=user_repo, session_service=token_service)

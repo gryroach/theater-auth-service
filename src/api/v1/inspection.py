@@ -1,4 +1,5 @@
 import time
+from typing import Annotated
 
 from asyncpg.exceptions import PostgresError
 from fastapi import APIRouter, Depends
@@ -20,8 +21,8 @@ router = APIRouter()
     description="Get connection time to services and get info.",
 )
 async def ping_services(
-    db: AsyncSession = Depends(get_session),
-    redis: AsyncSession = Depends(get_redis),
+    db: Annotated[AsyncSession, Depends(get_session)],
+    redis: Annotated[AsyncSession, Depends(get_redis)],
 ) -> Ping:
     """
     Ping services

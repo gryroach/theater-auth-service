@@ -1,8 +1,10 @@
+from typing import Annotated
+
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from repositories.login_history import LoginHistoryRepository
-from schemas.login_history import LoginHistoryCreate
+from schemas.login import LoginHistoryCreate
 
 
 class LoginHistoryService:
@@ -21,6 +23,6 @@ class LoginHistoryService:
 
 
 async def get_login_history_service(
-    repo: LoginHistoryRepository = Depends(),
+    repo: Annotated[LoginHistoryRepository, Depends()],
 ) -> LoginHistoryService:
     return LoginHistoryService(repo=repo)

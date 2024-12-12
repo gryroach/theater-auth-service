@@ -7,6 +7,7 @@ class PayloadKeys(str, Enum):
     TYPE = "type"
     IAT = "iat"
     EXP = "exp"
+    ROLE = "role"
 
 
 class TokenTypes(str, Enum):

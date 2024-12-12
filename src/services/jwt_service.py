@@ -39,7 +39,7 @@ class JWTService:
             PayloadKeys.IAT: now,
             PayloadKeys.EXP: now + self.access_token_expire,
             PayloadKeys.TYPE: TokenTypes.ACCESS,
-            "role": role,
+            PayloadKeys.ROLE: role,
         }
         return self._create_token(payload)
 
@@ -53,7 +53,7 @@ class JWTService:
             PayloadKeys.IAT: now,
             PayloadKeys.EXP: now + self.refresh_token_expire,
             PayloadKeys.TYPE: TokenTypes.REFRESH,
-            "role": role,
+            PayloadKeys.ROLE: role,
         }
         return self._create_token(payload)
 

@@ -10,6 +10,7 @@ class SessionService:
     """
     Сервис управлениями сессиями пользователей в кэш-сервисе
     """
+
     def __init__(self, cache: CacheRepository):
         self.cache = cache
 
@@ -45,4 +46,4 @@ class SessionService:
 async def get_session_service(
         redis: Redis = Depends(get_redis)
 ) -> SessionService:
-    return SessionService("""Декодирует JWT-токен с использованием публичного ключа (асимметричный)."""RedisCacheRepository(redis))
+    return SessionService(RedisCacheRepository(redis))
