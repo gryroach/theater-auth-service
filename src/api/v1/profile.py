@@ -1,12 +1,15 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from db.db import get_session
-from dependencies.auth import get_current_user
+from dependencies.auth import JWTBearer, get_current_user
+from schemas.jwt import JwtTokenPayload
+from schemas.role import Role
 from schemas.user import UserCredentialsUpdate, UserData, UserInDB
+from services.roles import Roles
 from services.session_service import SessionService, get_session_service
 from services.user import UserService, get_user_service
 
@@ -58,3 +61,22 @@ async def update_user_data(
         user_data,
     )
     return user
+
+
+@router.get(
+    "/permissions",
+    response_model=Role,
+    status_code=status.HTTP_200_OK,
+    description="Получение роли и прав пользователя",
+    summary="Получение роли и прав пользователя",
+)
+async def get_user_permission(
+    token_payload: Annotated[JwtTokenPayload, Depends(JWTBearer())],
+) -> Role:
+    role = getattr(Roles, token_payload.role, None)
+    if role is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid role",
+        )
+    return role
