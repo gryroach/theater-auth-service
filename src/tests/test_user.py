@@ -58,7 +58,7 @@ async def test_get_user_role(
 
 @pytest.mark.asyncio
 async def test_get_user_role_unauthorized(
-        client: AsyncClient, create_user: User
+    client: AsyncClient, create_user: User
 ) -> None:
     """
     Тест авторизации при получении роли пользователя
@@ -104,7 +104,7 @@ async def test_set_user_role_unauthorized(
 
 @pytest.mark.asyncio
 async def test_get_user_role_not_found(
-        client: AsyncClient, login_user: dict
+    client: AsyncClient, login_user: dict
 ) -> None:
     """
     Тест для проверки ошибки при получении роли несуществующего пользователя
@@ -122,7 +122,7 @@ async def test_get_user_role_not_found(
 
 @pytest.mark.asyncio
 async def test_get_user_role_not_found_unauthorized(
-        client: AsyncClient
+    client: AsyncClient,
 ) -> None:
     """
     Тест авторизации при получении роли несуществующего пользователя
@@ -134,7 +134,7 @@ async def test_get_user_role_not_found_unauthorized(
 
 @pytest.mark.asyncio
 async def test_set_user_role_not_found(
-        client: AsyncClient, login_user: dict
+    client: AsyncClient, login_user: dict
 ) -> None:
     """
     Тест для проверки ошибки при обновлении роли несуществующего пользователя
@@ -154,7 +154,7 @@ async def test_set_user_role_not_found(
 
 @pytest.mark.asyncio
 async def test_set_user_role_not_found_unauthorized(
-        client: AsyncClient
+    client: AsyncClient,
 ) -> None:
     """
     Тест авторизации при обновлении роли несуществующего пользователя

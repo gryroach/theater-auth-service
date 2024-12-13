@@ -12,6 +12,7 @@ class UserCredentials(BaseModel):
 class UserCreate(UserCredentials):
     first_name: str
     last_name: str
+    role: str
 
 
 class UserInDB(BaseModel):
