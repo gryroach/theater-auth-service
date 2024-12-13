@@ -71,7 +71,7 @@ async def _create_db(engine: AsyncEngine) -> None:
 
 @pytest_asyncio.fixture()
 async def db_connection(
-        engine: AsyncEngine
+    engine: AsyncEngine,
 ) -> AsyncGenerator[AsyncConnection, None]:
     async with engine.connect() as connection:
         yield connection
@@ -98,7 +98,7 @@ async def session(
 
 @pytest_asyncio.fixture()
 async def client(
-        monkeypatch: MonkeyPatch
+    monkeypatch: MonkeyPatch,
 ) -> AsyncGenerator[AsyncClient, None]:
     monkeypatch.setattr(
         "core.config.settings.redis_host",

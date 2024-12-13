@@ -33,8 +33,8 @@ class AppSettings(BaseSettings):
     # Настройки аутентификации
     ACCESS_TOKEN_EXPIRE_DAYS: int = Field(default=7)
     REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=30)
-    private_key: str = Field(default="./keys/private_key.pem")
-    public_key: str = Field(default="./keys/public_key.pem")
+    private_key: str = Field(default="/app/keys/private_key.pem")
+    public_key: str = Field(default="/app/keys/public_key.pem")
     jwt_algorithm: str = Field(default="RS256")
 
     # Константы

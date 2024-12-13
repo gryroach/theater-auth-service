@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from db.db import get_session
-from dependencies.auth import get_current_user, JWTBearer
+from dependencies.auth import JWTBearer, get_current_user
 from schemas.login import LoginHistoryInDB, LoginRequest, LoginResponse
 from schemas.refresh import TokenRefreshRequest, TokenResponse
 from schemas.user import UserCreate, UserInDB
