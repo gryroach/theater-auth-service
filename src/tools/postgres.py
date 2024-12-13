@@ -1,19 +1,9 @@
-import asyncio
-from functools import wraps
-
 import typer
 
 from db.db import Base, engine
+from utils import coro
 
 app = typer.Typer()
-
-
-def coro(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        return asyncio.run(f(*args, **kwargs))
-
-    return wrapper
 
 
 @app.command()
