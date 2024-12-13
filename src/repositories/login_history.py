@@ -1,6 +1,6 @@
 from models.login_history import LoginHistory
 from repositories.base import RepositoryDB
-from schemas.login_history import LoginHistoryCreate, LoginHistoryInDB
+from schemas.login import LoginHistoryCreate, LoginHistoryInDB
 
 
 class LoginHistoryRepository(

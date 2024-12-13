@@ -1,17 +1,16 @@
 import time
+from typing import Annotated
 
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text
 from asyncpg.exceptions import PostgresError
-from redis import (
-    ConnectionError as RedisConnectionError,
-    TimeoutError as RedisTimeoutError,
-)
+from fastapi import APIRouter, Depends
+from redis import ConnectionError as RedisConnectionError
+from redis import TimeoutError as RedisTimeoutError
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.db import get_session
 from db.redis import get_redis
-from schemas.inspect import Ping, DatabaseStatus, Status, RedisStatus
+from schemas.inspect import DatabaseStatus, Ping, RedisStatus, Status
 
 router = APIRouter()
 
@@ -22,8 +21,8 @@ router = APIRouter()
     description="Get connection time to services and get info.",
 )
 async def ping_services(
-    db: AsyncSession = Depends(get_session),
-    redis: AsyncSession = Depends(get_redis),
+    db: Annotated[AsyncSession, Depends(get_session)],
+    redis: Annotated[AsyncSession, Depends(get_redis)],
 ) -> Ping:
     """
     Ping services
