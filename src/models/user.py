@@ -21,13 +21,11 @@ class User(Base):
         password: str,
         first_name: str,
         last_name: str,
-        role: str,
     ) -> None:
         self.login = login
         self.password = generate_password_hash(password)
         self.first_name = first_name
         self.last_name = last_name
-        self.role = role
 
     def check_password(self, password: str) -> bool:
         return check_password_hash(self.password, password)
