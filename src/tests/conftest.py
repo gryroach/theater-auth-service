@@ -86,7 +86,7 @@ async def db_transaction(
         await transaction.rollback()
 
 
-@pytest_asyncio.fixture(autouse=True)
+@pytest_asyncio.fixture()
 async def session(
     db_connection: AsyncConnection, monkeypatch: MonkeyPatch
 ) -> AsyncGenerator[AsyncSession, None]:

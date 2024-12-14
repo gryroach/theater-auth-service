@@ -28,6 +28,12 @@ nano ./src/.env
 make run-all
 ```
 
+#### Запуск контейнеров для API-сервиса
+
+```shell
+make run-api
+```
+
 #### Остановка и удаление всех контейнеров
 
 ```shell
@@ -40,7 +46,8 @@ make down
 
 Запуск функциональных тестов
 
-- через docker-compose с запуском и остановкой вспомогательных сервисов:
+- через docker-compose (предварительно нужно задать настройки БД и Redis, 
+либо выполнить `make run-api`):
 
 ```shell
 make run-functional-tests
