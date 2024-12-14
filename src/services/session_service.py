@@ -44,6 +44,6 @@ class SessionService:
 
 
 async def get_session_service(
-        redis: Redis = Depends(get_redis)
+    redis: Redis = Depends(get_redis),
 ) -> SessionService:
     return SessionService(RedisCacheRepository(redis))

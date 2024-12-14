@@ -1,9 +1,9 @@
-version: '3'
 services:
   api:
     build:
       dockerfile: src/Dockerfile
       context: .
+    image: movies-auth-image
     container_name: movies_auth
     env_file:
       - ./.env
@@ -49,6 +49,16 @@ services:
       interval: 1s
       timeout: 3s
       retries: 50
+
+  test:
+    build:
+      dockerfile: src/Dockerfile
+      context: .
+    image: movies-auth-image
+    container_name: movies_auth_tests
+    entrypoint: "sh entrypoint-test.sh"
+    env_file:
+      - ./.env
 
 volumes:
   movies_auth_data:
