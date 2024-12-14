@@ -10,7 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.db import get_session
 from db.redis import get_redis
+from dependencies.auth import require_roles
 from schemas.inspect import DatabaseStatus, Ping, RedisStatus, Status
+from services.roles import Roles
 
 router = APIRouter()
 
@@ -19,6 +21,7 @@ router = APIRouter()
     "/ping",
     response_model=Ping,
     description="Get connection time to services and get info.",
+    dependencies=[Depends(require_roles([Roles.admin.name]))],
 )
 async def ping_services(
     db: Annotated[AsyncSession, Depends(get_session)],

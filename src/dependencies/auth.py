@@ -1,9 +1,11 @@
+from typing import Annotated, Callable
 from uuid import UUID
 
 import jwt
-from fastapi import Depends, Request
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
 from db.db import get_session
 from exceptions.auth_exceptions import InvalidTokenError, TokenExpiredError
@@ -60,9 +62,9 @@ class JWTBearer(HTTPBearer):
 
 
 async def get_current_user(
-    token_payload: JwtTokenPayload = Depends(JWTBearer()),
-    user_service: UserService = Depends(get_user_service),
-    db: AsyncSession = Depends(get_session),
+    token_payload: Annotated[JwtTokenPayload, Depends(JWTBearer())],
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> UserInDB:
     try:
         user_id = UUID(token_payload.user)
@@ -72,3 +74,19 @@ async def get_current_user(
     if not user:
         raise UserDoesNotExistsError("User not found")
     return UserInDB.model_validate(user)
+
+
+def require_roles(
+        required_roles: list[str]
+) -> Callable[[JwtTokenPayload], JwtTokenPayload]:
+    def dependency(
+        token_payload: Annotated[JwtTokenPayload, Depends(JWTBearer())]
+    ) -> JwtTokenPayload:
+        if token_payload.role not in required_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Permission denied",
+            )
+        return token_payload
+
+    return dependency

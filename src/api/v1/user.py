@@ -6,10 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from db.db import get_session
-from dependencies.auth import JWTBearer
+from dependencies.auth import require_roles
 from exceptions.user_exceptions import UserDoesNotExistsError
 from schemas.base import ErrorResponse
 from schemas.role import Role, UpdateRole
+from services.roles import Roles
 from services.user import UserService, get_user_service
 
 router = APIRouter()
@@ -27,7 +28,9 @@ router = APIRouter()
             "description": "User not found",
         }
     },
-    dependencies=[Depends(JWTBearer())],
+    dependencies=[
+        Depends(require_roles([Roles.admin.name, Roles.moderator.name]))
+    ],
 )
 async def get_user_role(
     user_id: UUID,
@@ -56,7 +59,9 @@ async def get_user_role(
             "description": "User not found",
         }
     },
-    dependencies=[Depends(JWTBearer())],
+    dependencies=[
+        Depends(require_roles([Roles.admin.name, Roles.moderator.name]))
+    ],
 )
 async def set_user_role(
     user_id: UUID,
