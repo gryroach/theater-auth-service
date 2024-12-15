@@ -6,8 +6,8 @@ from starlette import status
 
 from db.db import get_session
 from dependencies.auth import JWTBearer, get_current_user
-from schemas.login import LoginRequest, LoginResponse
-from schemas.paginator import Paginator
+from schemas.login import LoginHistoryInDB, LoginRequest, LoginResponse
+from schemas.paginator import PaginationResult, Paginator
 from schemas.refresh import TokenRefreshRequest, TokenResponse
 from schemas.user import UserCreate, UserInDB
 from services.auth import AuthService, get_auth_service
@@ -48,7 +48,7 @@ async def login(
 
 @router.get(
     "/login-history",
-    response_model=dict,
+    response_model=PaginationResult[LoginHistoryInDB],
     description="История входов",
     summary="История входов",
 )
@@ -58,7 +58,7 @@ async def get_login_history(
     history_service: Annotated[
         LoginHistoryService, Depends(get_login_history_service)
     ],
-    paginator: Paginator = Depends(),
+    paginator: Annotated[Paginator[LoginHistoryInDB], Depends()],
 ):
     """Получить историю входов текущего пользователя с пагинацией."""
     history = await history_service.get_user_history(
@@ -67,8 +67,7 @@ async def get_login_history(
         skip=paginator.skip,
         limit=paginator.size,
     )
-    has_next = len(history) == paginator.size
-    return paginator.to_response(data=history, has_next=has_next)
+    return paginator.to_response(data=history)
 
 
 @router.post(

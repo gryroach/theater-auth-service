@@ -6,7 +6,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx_configs/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx_configs/sites:/etc/nginx/conf.d:ro
     depends_on:
       api:
         condition: service_started
