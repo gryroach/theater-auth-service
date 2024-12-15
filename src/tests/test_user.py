@@ -9,6 +9,8 @@ from starlette import status
 from models import User
 from services.roles import Roles
 
+pytestmark = pytest.mark.asyncio
+
 
 @pytest_asyncio.fixture
 async def create_admin_user(session: AsyncSession) -> User:
@@ -44,7 +46,7 @@ async def create_regular_user(session: AsyncSession) -> User:
 
 @pytest_asyncio.fixture
 async def login_admin_user(
-        client: AsyncClient, create_admin_user: User
+    client: AsyncClient, create_admin_user: User
 ) -> dict:
     """Выполняет логин админа и возвращает токены доступа."""
     login_data = {
@@ -68,9 +70,8 @@ async def login_user(client: AsyncClient, create_regular_user: User) -> dict:
     return response.json()
 
 
-@pytest.mark.asyncio
 async def test_login_user_wrong_pass(
-        client: AsyncClient, create_regular_user: User
+    client: AsyncClient, create_regular_user: User
 ) -> None:
     """Тест неправильного пароля."""
     login_data = {
@@ -81,7 +82,6 @@ async def test_login_user_wrong_pass(
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-@pytest.mark.asyncio
 async def test_get_user_role(
     client: AsyncClient, create_admin_user: User, login_admin_user: dict
 ) -> None:
@@ -99,7 +99,6 @@ async def test_get_user_role(
     assert data["permissions"] == Roles.admin.permissions.model_dump()
 
 
-@pytest.mark.asyncio
 async def test_get_user_role_by_regular_user(
     client: AsyncClient, create_regular_user: User, login_user: dict
 ) -> None:
@@ -114,9 +113,8 @@ async def test_get_user_role_by_regular_user(
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.asyncio
 async def test_get_user_role_unauthorized(
-        client: AsyncClient, create_admin_user: User
+    client: AsyncClient, create_admin_user: User
 ) -> None:
     """
     Тест авторизации при получении роли пользователя
@@ -125,7 +123,6 @@ async def test_get_user_role_unauthorized(
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.asyncio
 async def test_set_user_role(
     client: AsyncClient, create_admin_user: User, login_admin_user: dict
 ) -> None:
@@ -145,7 +142,6 @@ async def test_set_user_role(
     assert data["permissions"] == Roles.moderator.permissions.model_dump()
 
 
-@pytest.mark.asyncio
 async def test_set_user_role_by_regular_user(
     client: AsyncClient, create_regular_user: User, login_user: dict
 ) -> None:
@@ -162,7 +158,6 @@ async def test_set_user_role_by_regular_user(
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.asyncio
 async def test_set_user_role_unauthorized(
     client: AsyncClient, create_admin_user: User
 ) -> None:
@@ -177,9 +172,8 @@ async def test_set_user_role_unauthorized(
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.asyncio
 async def test_get_user_role_not_found(
-        client: AsyncClient, login_admin_user: dict
+    client: AsyncClient, login_admin_user: dict
 ) -> None:
     """
     Тест для проверки ошибки при получении роли несуществующего пользователя
@@ -195,7 +189,6 @@ async def test_get_user_role_not_found(
     assert data["detail"] == "User does not exists"
 
 
-@pytest.mark.asyncio
 async def test_get_user_role_not_found_unauthorized(
     client: AsyncClient,
 ) -> None:
@@ -207,9 +200,8 @@ async def test_get_user_role_not_found_unauthorized(
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.asyncio
 async def test_set_user_role_not_found(
-        client: AsyncClient, login_admin_user: dict
+    client: AsyncClient, login_admin_user: dict
 ) -> None:
     """
     Тест для проверки ошибки при обновлении роли несуществующего пользователя
@@ -227,7 +219,6 @@ async def test_set_user_role_not_found(
     assert data["detail"] == "User does not exists"
 
 
-@pytest.mark.asyncio
 async def test_set_user_role_not_found_unauthorized(
     client: AsyncClient,
 ) -> None:
@@ -243,7 +234,6 @@ async def test_set_user_role_not_found_unauthorized(
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.asyncio
 async def test_set_user_role_invalid(
     client: AsyncClient, create_admin_user: User, login_admin_user: dict
 ) -> None:
@@ -263,7 +253,6 @@ async def test_set_user_role_invalid(
     assert data["detail"][0]["msg"] == "Value error, Role does not exists"
 
 
-@pytest.mark.asyncio
 async def test_set_user_role_invalid_unauthorized(
     client: AsyncClient, create_admin_user: User
 ) -> None:

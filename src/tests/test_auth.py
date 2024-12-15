@@ -7,6 +7,8 @@ from starlette import status
 from models import User
 from services.roles import Roles
 
+pytestmark = pytest.mark.asyncio
+
 
 @pytest_asyncio.fixture
 async def create_user(session: AsyncSession) -> User:
@@ -24,7 +26,6 @@ async def create_user(session: AsyncSession) -> User:
     return user
 
 
-@pytest.mark.asyncio
 async def test_login(client: AsyncClient, create_user: User) -> None:
     """
     Тест логина пользователя.
@@ -40,7 +41,6 @@ async def test_login(client: AsyncClient, create_user: User) -> None:
     assert "refresh_token" in tokens
 
 
-@pytest.mark.asyncio
 async def test_login_invalid_credentials(client: AsyncClient) -> None:
     """
     Тест логина с неверными данными.
@@ -54,7 +54,6 @@ async def test_login_invalid_credentials(client: AsyncClient) -> None:
     assert response.json().get("detail") == "Wrong login or password"
 
 
-@pytest.mark.asyncio
 async def test_refresh_token_invalid(client: AsyncClient) -> None:
     """
     Тест обновления access токена с неверным refresh токеном.
@@ -68,7 +67,6 @@ async def test_refresh_token_invalid(client: AsyncClient) -> None:
     assert response.json().get("detail") == "Token is invalid."
 
 
-@pytest.mark.asyncio
 async def test_logout(client: AsyncClient, create_user: User) -> None:
     """
     Тест выхода из системы (logout).
@@ -100,7 +98,6 @@ async def test_logout(client: AsyncClient, create_user: User) -> None:
     )
 
 
-@pytest.mark.asyncio
 async def test_logout_all(client: AsyncClient, create_user: User) -> None:
     """
     Тест выхода из всех сессий (logout all).
@@ -145,7 +142,6 @@ async def test_logout_all(client: AsyncClient, create_user: User) -> None:
         )
 
 
-@pytest.mark.asyncio
 async def test_refresh_token(client: AsyncClient, create_user: User) -> None:
     """
     Тест обновления access токена.
